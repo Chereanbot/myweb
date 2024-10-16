@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to CHERI AND DINEX</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background-color: black; /* Solid black background */
+            color: white;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            font-size: 30px;
+            width: 800px;
+            z-index: 2;
+        }
+
+        .welcome-text {
+            font-size: 4em;
+            animation: fireGlow 1.5s infinite alternate, scalePulse 2s infinite;
+            text-shadow: 
+                0 0 10px rgba(255, 80, 0, 0.9),
+                0 0 20px rgba(255, 120, 0, 0.8),
+                0 0 30px rgba(255, 180, 0, 0.7),
+                0 0 40px rgba(255, 240, 0, 0.6);
+        }
+
+        /* Fire glowing effect for the welcome text */
+        @keyframes fireGlow {
+            0% {
+                text-shadow: 
+                    0 0 10px rgba(255, 80, 0, 0.8),
+                    0 0 15px rgba(255, 120, 0, 0.7),
+                    0 0 20px rgba(255, 180, 0, 0.6),
+                    0 0 25px rgba(255, 240, 0, 0.5);
+            }
+            100% {
+                text-shadow: 
+                    0 0 15px rgba(255, 100, 0, 1),
+                    0 0 25px rgba(255, 150, 0, 0.9),
+                    0 0 35px rgba(255, 200, 0, 0.8),
+                    0 0 50px rgba(255, 255, 0, 0.7);
+            }
+        }
+
+        /* Pulsating scale effect for the welcome text */
+        @keyframes scalePulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Loading spinner styles */
+        .loading-spinner {
+            margin: 20px auto; /* Center the spinner */
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 10px solid rgb(72, 255, 0);
+            border-bottom: 10px solid rgb(55, 0, 255);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="animationCanvas"></canvas>
+
+    <div class="container">
+        <h1 class="welcome-text">Welcome</h1>
+        <p>Loading</p>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resize the canvas to fill the window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Define specific letters to fall
+        const letters = "CHERIDINEX";
+        const fallingLetters = [];
+
+        function createFallingLetter() {
+            const letter = letters.charAt(Math.floor(Math.random() * letters.length));
+            const x = Math.random() * canvas.width;
+            const speed = Math.random() * 10 + 5; // Random speed
+            const size = Math.random() * 150 + 90; // Random size
+            const rotation = Math.random() * 360; // Initial rotation
+            fallingLetters.push({ letter, x, y: 0, speed, size, rotation, rotationSpeed: Math.random() * 8 - 4 });
+        }
+
+        function animateFallingLetters() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            fallingLetters.forEach((item, index) => {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+                ctx.rotate((item.rotation * Math.PI) / 180); // Rotate the letter
+                ctx.font = `${item.size}px Arial`;
+                ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`; // Random color
+                ctx.fillText(item.letter, 0, 0);
+                ctx.restore();
+
+                // Update position and rotation
+                item.y += item.speed;
+                item.rotation += item.rotationSpeed;
+
+                // Bounce effect when hitting the bottom
+                if (item.y > canvas.height - item.size) {
+                    item.y = canvas.height - item.size;
+                    item.speed = -item.speed * 0.7; // Reduce speed and reverse direction
+                }
+
+                // Remove letters that stop bouncing
+                if (Math.abs(item.speed) < 0.1) {
+                    fallingLetters.splice(index, 1);
+                }
+            });
+
+            // Create new letters periodically
+            if (Math.random() < 0.1) {
+                createFallingLetter();
+            }
+
+            requestAnimationFrame(animateFallingLetters);
+        }
+
+        // Start the falling letter animation
+        animateFallingLetters();
+
+        // Redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = 'inde.html';
+        }, 10000);
+    </script>
+</body>
+</html>
